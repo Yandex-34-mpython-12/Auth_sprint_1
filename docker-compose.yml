@@ -1,0 +1,91 @@
+services:
+  fastapi:
+    build: ./src
+    env_file: .env
+    container_name: fastapi
+    expose:
+      - ${FASTAPI_PORT}
+    depends_on:
+      - etl
+      - elasticsearch
+      - redis
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8000/api/health/ || exit 1" ]
+      interval: 1s
+      timeout: 5s
+      retries: 15
+
+  redis:
+    image: redis:7.2.4
+    container_name: redis
+    volumes:
+      - redis-data:/data
+    expose:
+      - ${REDIS_PORT}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 5s
+      retries: 15
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    env_file: .env
+    expose:
+      - ${DB_PORT}
+    volumes:
+      - ./db/db_dump_260624.sql:/docker-entrypoint-initdb.d/db_dump_260624.sql
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 1s
+      timeout: 5s
+      retries: 15
+
+  elasticsearch:
+    build:
+      context: es
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    expose:
+      - ${ELASTICSEARCH_PORT}
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 1s
+      timeout: 5s
+      retries: 15
+
+  etl:
+    build:
+      context: etl
+    env_file: .env
+    volumes:
+      - ./etl/es_state.json:/usr/src/app/es_state.json
+    depends_on:
+      - postgres
+      - elasticsearch
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./etc/nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - fastapi
+    ports:
+      - "80:80"
+    environment:
+      NGINX_SET_REAL_IPS_FROM: |-
+        [${NGINX_SET_REAL_IPS_FROM}]
+
+volumes:
+  es_data:
+  redis-data:
+  postgres-data:
