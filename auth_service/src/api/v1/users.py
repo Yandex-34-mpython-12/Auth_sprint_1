@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi_jwt import JwtAccessBearerCookie, JwtRefreshBearer, JwtAuthorizationCredentials
 
 from src.core.config import settings
-from src.schemas.entity import UserInDB, UserCreate, UserLogin
+from src.schemas.user import UserInDB, UserCreate, UserLogin
 from src.schemas.token import Tokens
 from src.services.user import get_user_service
 

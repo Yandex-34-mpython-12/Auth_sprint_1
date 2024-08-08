@@ -9,8 +9,9 @@ from src.core.config import settings
 from src.db.base_cache import AsyncCache
 from src.db.postgres import get_session
 from src.db.redis import AsyncRedisCache, get_redis
-from src.models.entity import User, Token
-from src.schemas.entity import UserCreate
+from src.models.token import Token
+from src.models.user import User
+from src.schemas.user import UserCreate
 
 
 class UserService:

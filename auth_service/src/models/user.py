@@ -5,11 +5,8 @@ from sqlalchemy import DateTime, String, func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.postgres import Base
+from src.models.mixins import UserSchemaMixin
 from src.utils.hash import verify_password, hash_password
-
-
-class UserSchemaMixin:
-    __table_args__ = {'schema': 'users'}
 
 
 class User(UserSchemaMixin, Base):
@@ -34,17 +31,3 @@ class User(UserSchemaMixin, Base):
 
     def __repr__(self) -> str:
         return f'<User {self.login}>'
-
-
-class Token(UserSchemaMixin, Base):
-    __tablename__ = 'tokens'
-
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    refresh_token: Mapped[str] = mapped_column(unique=True, nullable=False)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey('users.users.id'), unique=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-    user: Mapped["User"] = relationship(back_populates="token", single_parent=True)
-
-    def __repr__(self) -> str:
-        return f'<Token {self.id}>'
