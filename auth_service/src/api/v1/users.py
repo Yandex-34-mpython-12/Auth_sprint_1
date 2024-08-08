@@ -1,11 +1,12 @@
 from datetime import timedelta
+from uuid import UUID
 
 from fastapi import APIRouter, status, Depends, HTTPException, Security, Request
 from fastapi.responses import JSONResponse
 from fastapi_jwt import JwtAccessBearerCookie, JwtRefreshBearer, JwtAuthorizationCredentials
 
 from src.core.config import settings
-from src.schemas.user import UserInDB, UserCreate, UserLogin
+from src.schemas.user import UserInDB, UserCreate, UserLogin, UserPermissionInDB
 from src.schemas.token import Tokens
 from src.services.user import get_user_service
 
@@ -51,12 +52,12 @@ async def login(user_data: UserLogin, user_service=Depends(get_user_service)):
         expires_delta=timedelta(days=settings.refresh_token_expires_days)
     )
 
-    await user_service.create_or_update_token(user.id, refresh_token)
+    await user_service.create_or_update_refresh_token(user.id, refresh_token)
 
     return Tokens(access_token=access_token, refresh_token=refresh_token)
 
 
-@router.post("/refresh")
+@router.post("/refresh", response_model=Tokens)
 async def refresh(
         request: Request,
         credentials: JwtAuthorizationCredentials = Security(refresh_security),
@@ -91,3 +92,13 @@ async def logout(
     await user_service.invalidate_access_token(user_id, access_token)
 
     return JSONResponse(content={}, status_code=status.HTTP_200_OK)
+
+
+@router.post("/{user_id}/permission", response_model=UserPermissionInDB)
+async def add_permission_to_user(
+        user_id: UUID,
+        permission_id: int,
+        # credentials: JwtAuthorizationCredentials = Security(access_security),   # TODO: права на доступ сюда
+        user_service=Depends(get_user_service),
+):
+    return await user_service.add_permission_to_user(user_id, permission_id)

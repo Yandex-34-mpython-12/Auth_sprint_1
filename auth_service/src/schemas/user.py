@@ -22,3 +22,12 @@ class UserInDB(BaseModel):
 class UserLogin(BaseModel):
     login: str
     password: str
+
+
+class UserPermissionAdd(BaseModel):
+    user_id: UUID
+    permission_id: int
+
+
+class UserPermissionInDB(UserPermissionAdd):
+    pass

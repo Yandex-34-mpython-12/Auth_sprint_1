@@ -10,8 +10,9 @@ from src.db.base_cache import AsyncCache
 from src.db.postgres import get_session
 from src.db.redis import AsyncRedisCache, get_redis
 from src.models.token import Token
-from src.models.user import User
-from src.schemas.user import UserCreate
+from src.models.user import User, Permission, UserPermission
+from src.schemas.permission import PermissionCreate
+from src.schemas.user import UserCreate, UserPermissionAdd
 
 
 class UserService:
@@ -63,7 +64,7 @@ class UserService:
         await self.db.refresh(token)
         return token
 
-    async def create_or_update_token(self, user_id: str | UUID, refresh_token: str) -> Token:
+    async def create_or_update_refresh_token(self, user_id: str | UUID, refresh_token: str) -> Token:
         if isinstance(user_id, str):
             user_id = UUID(user_id)
 
@@ -86,6 +87,21 @@ class UserService:
     async def invalidate_access_token(self, user_id: str, access_token: str) -> None:
         cache_key = f"{user_id}_logout"
         await self.cache.set(cache_key, access_token, settings.access_token_expires_min)
+
+    async def create_permission(self, permission_create: PermissionCreate) -> Permission:
+        permission_dto = permission_create.model_dump()
+        permission = Permission(**permission_dto)
+        self.db.add(permission)
+        await self.db.commit()
+        await self.db.refresh(permission)
+        return permission
+
+    async def add_permission_to_user(self, user_id, permission_id) -> UserPermission:
+        user_permission = UserPermission(user_id=user_id, permission_id=permission_id)
+        self.db.add(user_permission)
+        await self.db.commit()
+        await self.db.refresh(user_permission)
+        return user_permission
 
 
 @lru_cache()

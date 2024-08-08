@@ -30,7 +30,7 @@ class User(UserSchemaMixin, Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     token: Mapped["Token"] = relationship(back_populates="user")
-    permissions: Mapped[List["Permission"]] = relationship(secondary="user_permissions", back_populates="users")
+    permissions: Mapped[List["Permission"]] = relationship(secondary="users.user_permissions", back_populates="users")
 
     def __init__(self, **kwargs) -> None:
         password = kwargs.pop('password')
@@ -51,7 +51,7 @@ class Permission(UserSchemaMixin, Base):
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     codename: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
 
-    users: Mapped[List["User"]] = relationship(secondary="user_permissions", back_populates="permissions")
+    users: Mapped[List["User"]] = relationship(secondary="users.user_permissions", back_populates="permissions")
 
     def __repr__(self) -> str:
         return f'<Permission {self.name}>'
