@@ -1,2 +1,5 @@
-.venv
+.history
 .env
+.venv
+es/data
+etl/es_state.json

@@ -1,0 +1,7 @@
+cluster.name: "docker-cluster"
+network.host: 0.0.0.0
+
+# By default the low water mark threshold will stop the node from starting 
+# if your dev machine doesn't have at least 15% free. This is generally
+# less of a mission critical threshold when in Docker on a dev machine
+cluster.routing.allocation.disk.threshold_enabled: false
