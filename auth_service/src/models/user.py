@@ -1,47 +1,30 @@
-import uuid
-from datetime import datetime
-from typing import List
-
-from sqlalchemy import DateTime, String, func, ForeignKey
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID, UUID_ID
+from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.db.postgres import Base
-from src.models.mixins import UserSchemaMixin
-from src.utils.hash import verify_password, hash_password
+from .base import Base
+from .mixins import UserSchemaMixin
 
 
-class UserPermission(UserSchemaMixin, Base):
-    __tablename__ = "user_permissions"
+class User(UserSchemaMixin, SQLAlchemyBaseUserTableUUID, Base):
+    roles: Mapped[list["Role"]] = relationship(secondary="users.user_roles", back_populates="users")
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.users.id"), primary_key=True)
-    permission_id: Mapped[int] = mapped_column(ForeignKey("users.permissions.id"), primary_key=True)
-
-
-class User(UserSchemaMixin, Base):
-    __tablename__ = 'users'
-
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    login: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(255), nullable=False)
-    first_name: Mapped[str] = mapped_column(String(50))
-    last_name: Mapped[str] = mapped_column(String(50))
-    is_staff: Mapped[bool] = mapped_column(default=False)
-    is_active: Mapped[bool] = mapped_column(default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-    token: Mapped["Token"] = relationship(back_populates="user")
-    permissions: Mapped[List["Permission"]] = relationship(secondary="users.user_permissions", back_populates="users")
-
-    def __init__(self, **kwargs) -> None:
-        password = kwargs.pop('password')
-        kwargs['password'] = hash_password(password)
-        super().__init__(**kwargs)
-
-    def check_password(self, password: str) -> bool:
-        return verify_password(password, self.password)
+    @property
+    def roles_as_json(self):
+        return {role.name: [perm.codename for perm in role.permissions] for role in self.roles}
 
     def __repr__(self) -> str:
-        return f'<User {self.login}>'
+        return f'<User: {self.email}>'
+
+
+class Role(UserSchemaMixin, Base):
+    __tablename__ = 'roles'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+
+    users: Mapped[list["User"]] = relationship(secondary="users.user_roles", back_populates="roles")
+    permissions: Mapped[list["Permission"]] = relationship(back_populates="role")
 
 
 class Permission(UserSchemaMixin, Base):
@@ -49,9 +32,17 @@ class Permission(UserSchemaMixin, Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
-    codename: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    codename: Mapped[str] = mapped_column(String(150), unique=True, nullable=False)
+    role_id: Mapped[int] = mapped_column(ForeignKey("users.roles.id"), nullable=False)
 
-    users: Mapped[List["User"]] = relationship(secondary="users.user_permissions", back_populates="permissions")
+    role: Mapped["Role"] = relationship(back_populates="permissions")
 
     def __repr__(self) -> str:
-        return f'<Permission {self.name}>'
+        return f'<Permission: {self.name}>'
+
+
+class UserRoles(UserSchemaMixin, Base):
+    __tablename__ = "user_roles"
+
+    user_id: Mapped[UUID_ID] = mapped_column(ForeignKey("users.user.id"), primary_key=True)
+    role_id: Mapped[int] = mapped_column(ForeignKey("users.roles.id"), primary_key=True)

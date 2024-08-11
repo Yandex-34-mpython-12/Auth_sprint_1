@@ -1,6 +1,9 @@
 from fastapi import APIRouter
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/health",
+    tags=["Health"],
+)
 
 
 @router.get('/', summary='Проверка доступности сервиса')

@@ -1,33 +1,15 @@
-from uuid import UUID
+import uuid
 
-from pydantic import BaseModel
-
-
-class UserCreate(BaseModel):
-    login: str
-    password: str
-    first_name: str
-    last_name: str
+from fastapi_users import schemas
 
 
-class UserInDB(BaseModel):
-    id: UUID
-    first_name: str
-    last_name: str
-
-    class Config:
-        from_attributes = True
+class UserRead(schemas.BaseUser[uuid.UUID]):
+    pass
 
 
-class UserLogin(BaseModel):
-    login: str
-    password: str
+class UserCreate(schemas.BaseUserCreate):
+    pass
 
 
-class UserPermissionAdd(BaseModel):
-    user_id: UUID
-    permission_id: int
-
-
-class UserPermissionInDB(UserPermissionAdd):
+class UserUpdate(schemas.BaseUserUpdate):
     pass

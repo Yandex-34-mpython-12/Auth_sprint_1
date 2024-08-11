@@ -1,13 +1,18 @@
 from pydantic import BaseModel
 
 
-class PermissionCreate(BaseModel):
+class BasePermission(BaseModel):
     name: str
     codename: str
 
 
-class PermissionInDB(PermissionCreate):
+class PermissionRead(BasePermission):
     id: int
 
-    class Config:
-        from_attributes = True
+
+class PermissionCreate(BasePermission):
+    pass
+
+
+class PermissionUpdate(BasePermission):
+    pass

@@ -7,8 +7,7 @@ from src.db.base_cache import AsyncCache
 redis: Optional[Redis] = None
 
 
-# Функция понадобится при внедрении зависимостей
-async def get_redis() -> "AsyncRedisCache":
+def get_redis() -> "AsyncRedisCache":
     return AsyncRedisCache(redis)
 
 
