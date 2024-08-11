@@ -6,6 +6,6 @@ __all__ = (
 )
 
 from .backend import authentication_backend
+from .strategy import get_jwt_strategy
 from .user_manager import get_user_manager
 from .users import get_users_db
-from .strategy import get_jwt_strategy

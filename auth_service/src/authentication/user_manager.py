@@ -1,13 +1,8 @@
 import logging
 import uuid
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi_users import (
-    BaseUserManager,
-    UUIDIDMixin, models, exceptions,
-)
-
+from fastapi_users import BaseUserManager, UUIDIDMixin
 from src.core.config import settings
 from src.models.user import User
 

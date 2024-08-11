@@ -1,11 +1,9 @@
 import uuid
 
 from fastapi_users import FastAPIUsers
-
+from src.api.dependencies.authentication import (authentication_backend,
+                                                 get_user_manager)
 from src.models import User
-
-from src.api.dependencies.authentication import get_user_manager
-from src.api.dependencies.authentication import authentication_backend
 
 fastapi_users = FastAPIUsers[User, uuid.UUID](
     get_user_manager,

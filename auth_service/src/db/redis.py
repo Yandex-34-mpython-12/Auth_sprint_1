@@ -1,7 +1,6 @@
-from typing import Optional, Any
+from typing import Any, Optional
 
 from redis.asyncio import Redis
-
 from src.db.base_cache import AsyncCache
 
 redis: Optional[Redis] = None

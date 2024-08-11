@@ -1,14 +1,8 @@
-from typing import (
-    TYPE_CHECKING,
-    Annotated,
-)
+from typing import TYPE_CHECKING, Annotated
 
 from fastapi import Depends
-
 from src.db.postgres import db_helper
-from src.models import (
-    User,
-)
+from src.models import User
 from src.services.auth import AuthUserService
 
 if TYPE_CHECKING:

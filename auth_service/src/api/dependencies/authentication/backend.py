@@ -1,8 +1,7 @@
 from fastapi_users.authentication import AuthenticationBackend
-
 from src.authentication.transport import bearer_transport
-from .strategy import get_jwt_strategy
 
+from .strategy import get_jwt_strategy
 
 authentication_backend = AuthenticationBackend(
     name="jwt-redis",

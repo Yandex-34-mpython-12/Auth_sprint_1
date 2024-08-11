@@ -2,7 +2,8 @@ from typing import TYPE_CHECKING
 
 from fastapi_users import models
 from fastapi_users.authentication import JWTStrategy
-from fastapi_users.authentication.strategy.jwt import JWTStrategyDestroyNotSupportedError
+from fastapi_users.authentication.strategy.jwt import \
+    JWTStrategyDestroyNotSupportedError
 from fastapi_users.jwt import generate_jwt
 
 if TYPE_CHECKING:

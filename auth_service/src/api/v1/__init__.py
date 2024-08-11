@@ -1,15 +1,10 @@
-from fastapi import (
-    APIRouter,
-    Depends,
-)
+from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBearer
-
 from src.core.config import settings
 
 from .auth import router as auth_router
-from .users import router as users_router
 from .health import router as health_router
-
+from .users import router as users_router
 
 http_bearer = HTTPBearer(auto_error=False)
 
