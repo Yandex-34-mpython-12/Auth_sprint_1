@@ -3,8 +3,6 @@ from typing import Optional
 from fastapi_users.models import ID, UP
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy import func, select
-from sqlalchemy.orm import selectinload
-from src.models import Role
 
 
 class AuthUserService(SQLAlchemyUserDatabase):
