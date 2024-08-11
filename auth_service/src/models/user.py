@@ -7,7 +7,7 @@ from .mixins import UserSchemaMixin
 
 
 class User(UserSchemaMixin, SQLAlchemyBaseUserTableUUID, Base):
-    roles: Mapped[list["Role"]] = relationship(secondary="users.user_roles", back_populates="users")
+    roles: Mapped[list["Role"]] = relationship(secondary="users.user_roles", back_populates="users", lazy="selectin")
 
     @property
     def roles_as_json(self):
@@ -24,7 +24,7 @@ class Role(UserSchemaMixin, Base):
     name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
 
     users: Mapped[list["User"]] = relationship(secondary="users.user_roles", back_populates="roles")
-    permissions: Mapped[list["Permission"]] = relationship(back_populates="role")
+    permissions: Mapped[list["Permission"]] = relationship(back_populates="role", lazy="selectin")
 
 
 class Permission(UserSchemaMixin, Base):
