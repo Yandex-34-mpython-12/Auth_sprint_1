@@ -12,7 +12,7 @@ logging_config.dictConfig(LOGGING)
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file='../../.env', env_file_encoding='utf-8', extra='ignore')
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', extra='ignore')
 
     project_name: str = Field('movies', alias='PROJECT_NAME')
     redis_host: str = Field('127.0.0.1', alias='REDIS_HOST')
@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     elastic_host: str = Field('127.0.0.1', alias='ELASTICSEARCH_HOST')
     elastic_port: int = Field(9200, alias='ELASTICSEARCH_PORT')
     elastic_schema: str = Field('http', alias='ELASTICSEARCH_SCHEMA')
+
+    jwt_secret_key: str = Field(..., alias='JWT_SECRET_KEY')
+    jwt_algorithm: str = Field(..., alias='JWT_ALGORITHM')
 
 
 settings = Settings()
