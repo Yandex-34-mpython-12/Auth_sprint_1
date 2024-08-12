@@ -8,8 +8,13 @@ from src.api.v1.deps import PaginationDep, QueryDep, SortDep
 from src.models.base import BaseOrjsonModel
 from src.models.film import Film
 from src.services.film import FilmService, get_film_service
+from .auth import role_required
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(
+        role_required("user")
+    )]
+)
 
 logger = logging.getLogger(__name__)
 

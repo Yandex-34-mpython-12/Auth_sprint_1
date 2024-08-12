@@ -20,7 +20,7 @@ class JWTRedisStrategy(JWTStrategy):
         data = {
             "sub": str(user.id),
             "aud": self.token_audience,
-            "roles": user.roles_as_json,
+            "role": user.role.name if user.role else "anonymous",
         }
         return generate_jwt(
             data, self.encode_key, self.lifetime_seconds, algorithm=self.algorithm

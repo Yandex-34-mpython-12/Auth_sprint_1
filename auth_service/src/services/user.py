@@ -5,22 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.base_cache import AsyncCache
 from src.db.postgres import db_helper
 from src.db.redis import AsyncRedisCache, get_redis
-from src.models import Permission
-from src.schemas import PermissionCreate
 
 
 class UserService:
     def __init__(self, cache: AsyncCache, db: AsyncSession):
         self.cache = cache
         self.db = db
-
-    async def create_permission(self, permission_create: PermissionCreate) -> Permission:
-        permission_dto = permission_create.model_dump()
-        permission = Permission(**permission_dto)
-        self.db.add(permission)
-        await self.db.commit()
-        await self.db.refresh(permission)
-        return permission
 
 
 @lru_cache()

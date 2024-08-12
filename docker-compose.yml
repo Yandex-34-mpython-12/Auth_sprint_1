@@ -75,8 +75,10 @@ services:
     environment:
       - xpack.security.enabled=false
       - discovery.type=single-node
-    expose:
-      - ${ELASTICSEARCH_PORT}
+#    expose:
+#      - ${ELASTICSEARCH_PORT}
+    ports:
+      - 9200:9200
     volumes:
       - es_data:/usr/share/elasticsearch/data
     healthcheck:
