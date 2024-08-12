@@ -1,22 +1,26 @@
 from http import HTTPStatus
+from typing import List
 
-from fastapi import APIRouter, Depends, Request, HTTPException, Query
-from fastapi_pagination import Page
+from fastapi import APIRouter, Depends, HTTPException
 
-from auth_service.src.models import Role
-from auth_service.src.models.data import RoleCreate
-from auth_service.src.services.role import RoleService, role_services
+from src.core.config import settings
+from src.schemas import RoleCreate, RoleRead, RoleUpdate
+from src.services.role import RoleService, role_service
 
-router = APIRouter()
+router = APIRouter(
+    prefix=settings.api.v1.roles,
+    tags=["Roles"],
+)
 
-@router.post('/create', status_code=HTTPStatus.OK, description='Create new Role', response_model=Role)
+
+@router.post('/create', status_code=HTTPStatus.OK, description='Create new role', response_model=RoleRead)
 async def create_role(
-    request: Request,
-    role: RoleCreate,
-    service: RoleService = Depends(role_services),
-) -> Role:
-    role = await service.create_role(name=role.name)
-    if not role:
+    role_create: RoleCreate,
+    role_svc: RoleService = Depends(role_service),
+):
+    try:
+        role = await role_svc.create_role(role_create)
+    except Exception:
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='Role is taken')
     return role
 
@@ -25,38 +29,35 @@ async def create_role(
     '/list',
     status_code=HTTPStatus.OK,
     description='List Roles',
-    response_model=Page[Role],
+    response_model=List[RoleRead],
 )
-async def get_role(
-    page: int = Query(1),
-    items_per_page: int = Query(10),
-    service: RoleService = Depends(role_services),
-) -> Page[Role]:
-    result = await service.get_roles()
-    if not result:
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='Role not exist')
-    skip_pages = page - 1
-    return Page(
-        items=result[skip_pages : skip_pages + items_per_page],
-        total=len(result),
-        page=page,
-        size=items_per_page,
-    )
+async def get_roles(
+    role_svc: RoleService = Depends(role_service),
+):
+    return await role_svc.get_roles()
 
 
 @router.delete(
-    '/delete',
+    '/{role_id}',
     status_code=HTTPStatus.NO_CONTENT,
     description='Delete Roles',
 )
 async def delete_role(
-    request: Request,
     role_id: int,
-    service: RoleService = Depends(role_services),
+    role_svc: RoleService = Depends(role_service),
 ) -> None:
-    result = await service.delete_role(role_id=role_id)
+    result = await role_svc.delete_role(role_id)
 
     if not result:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, detail='Permission not exist'
+            status_code=HTTPStatus.BAD_REQUEST, detail='Role not exist'
         )
+
+
+@router.patch("/{role_id}", response_model=RoleRead)
+async def update_role(
+        role_id: int,
+        role_update: RoleUpdate,
+        role_svc: RoleService = Depends(role_service),
+):
+    return await role_svc.update_role(role_id, role_update)

@@ -1,1 +1,2 @@
-from .user import UserCreate, UserRead, UserUpdate
+from .user import UserRead, UserCreate, UserUpdate
+from .role import RoleRead, RoleCreate, RoleUpdate
