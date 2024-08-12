@@ -2,7 +2,6 @@ from http import HTTPStatus
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
-
 from src.core.config import settings
 from src.schemas import RoleCreate, RoleRead, RoleUpdate
 from src.services.role import RoleService, role_service

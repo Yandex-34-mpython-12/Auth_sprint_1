@@ -15,4 +15,3 @@ class RoleCreate(RoleBase):
 
 class RoleUpdate(RoleBase):
     pass
-

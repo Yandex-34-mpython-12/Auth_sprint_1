@@ -1,12 +1,12 @@
 from functools import lru_cache
 
 from fastapi import Depends
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, update
-
-from auth_service.src.models import Role, User
 from src.db.postgres import db_helper
 from src.schemas import RoleCreate, RoleUpdate
+
+from auth_service.src.models import Role
 
 
 class RoleService:
