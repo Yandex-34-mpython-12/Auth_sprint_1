@@ -1,54 +1,74 @@
 # Проектная работа 6 спринта
 
-С этого модуля вы больше не будете получать чётко расписанное ТЗ, а задания для каждого спринта вы найдёте внутри уроков. Перед тем как начать программировать, вам предстоит продумать архитектуру решения, декомпозировать задачи и распределить их между командой.
-
-В первом спринте модуля вы напишете основу вашего сервиса и реализуете все базовые требования к нему. Старайтесь избегать ситуаций, в которых один из ваших коллег сидит без дела. Для этого вам придётся составлять задачи, которые можно выполнить параллельно и выбрать единый стиль написания кода.
-
-К концу спринта у вас должен получиться сервис авторизации с системой ролей, написанный на FastAPI. Первый шаг к этому — проработать и описать архитектуру вашего сервиса. Это значит, что перед тем, как приступить к разработке, нужно составить план действий: из чего будет состоять сервис, каким будет его API, какие хранилища он будет использовать и какой будет его схема данных. Описание нужно сдать на проверку наставнику. Вам предстоит выбрать, какой метод организации доступов использовать для онлайн-кинотеатра, и систему прав, которая позволит ограничить доступ к ресурсам. 
-
-Для описания API рекомендуем использовать [OpenAPI](https://editor.swagger.io){target="_blank"}, если вы выберете путь REST. Или используйте текстовое описание, если вы планируете использовать gRPC. С этими инструментами вы познакомились в предыдущих модулях. Обязательно продумайте и опишите обработку ошибок. Например, как отреагирует ваш API, если обратиться к нему с истёкшим токеном? Будет ли отличаться ответ API, если передать ему токен с неверной подписью? А если имя пользователя уже занято? Документация вашего API должна включать не только ответы сервера при успешном завершении запроса, но и понятное описание возможных ответов с ошибкой.
-
-Для успешного завершения первой части модуля в вашем сервисе должны быть реализованы API для аутентификации и система управления ролями. Роли понадобятся, чтобы ограничить доступ к некоторым категориям фильмов. Например, «Фильмы, выпущенные менее 3 лет назад» могут просматривать только пользователи из группы 'subscribers'.  
-
-## API для сайта и личного кабинета
-
-- регистрация пользователя;
-- вход пользователя в аккаунт (обмен логина и пароля на пару токенов: JWT-access токен и refresh токен); 
-- обновление access-токена;
-- выход пользователя из аккаунта;
-- изменение логина или пароля (с отправкой email вы познакомитесь в следующих модулях, поэтому пока ваш сервис должен позволять изменять личные данные без дополнительных подтверждений);
-- получение пользователем своей истории входов в аккаунт;
-
-## API для управления доступами
-
-- CRUD для управления ролями:
-  - создание роли,
-  - удаление роли,
-  - изменение роли,
-  - просмотр всех ролей.
-- назначить пользователю роль;
-- отобрать у пользователя роль;
-- метод для проверки наличия прав у пользователя. 
-
-## Подсказки
-
-1. Продумайте, что делать с анонимными пользователями, которым доступно всё, что не запрещено отдельными правами.
-2. Метод проверки авторизации будет всегда нужен пользователям. Ходить каждый раз в БД — не очень хорошая идея. Подумайте, как улучшить производительность системы.
-3. Добавьте консольную команду для создания суперпользователя, которому всегда разрешено делать все действия в системе.
-4. Чтобы упростить себе жизнь с настройкой суперпользователя, продумайте, как сделать так, чтобы при авторизации ему всегда отдавался успех при всех запросах.
-5. Для реализации ограничения по фильмам подумайте о присвоении им какой-либо метки. Это потребует небольшой доработки ETL-процесса.
+Ссылка на проект: https://github.com/Yandex-34-mpython-12/Auth_sprint_1
 
 
-## Дополнительное задание
+This repository contains the microservices for our application, including authentication (`auth_service`), film management (`film_service`), and an ETL (Extract, Transform, Load) process (`etl`). Each service requires specific environment configurations, which should be set up before running the services.
 
-Реализуйте кнопку «Выйти из остальных аккаунтов», не прибегая к хранению в БД активных access-токенов.
+## Setting Up Environment Variables
 
-## Напоминаем о требованиях к качеству
+Each microservice in this project requires a `.env` file that contains necessary environment variables. These files should be created based on the `.env.example` files provided in each service's directory.
 
-Перед тем как сдать ваш код на проверку, убедитесь, что 
+### Steps to Create `.env` Files
 
-- Код написан по правилам pep8: при запуске [линтера](https://semakin.dev/2020/05/python_linters/){target="_blank"} в консоли не появляется предупреждений и возмущений;
-- Все ключевые методы покрыты тестами: каждый ответ каждой ручки API и важная бизнес-логика тщательно проверены;
-- У тестов есть понятное описание, что именно проверяется внутри. Используйте [pep257](https://www.python.org/dev/peps/pep-0257/){target="_blank"}; 
-- Заполните README.md так, чтобы по нему можно было легко познакомиться с вашим проектом. Добавьте короткое, но ёмкое описание проекта. По пунктам опишите как запустить приложения с нуля, перечислив полезные команды. Упомяните людей, которые занимаются проектом и их роли. Ведите changelog: описывайте, что именно из задания модуля уже реализовано в вашем сервисе и пополняйте список по мере развития.
-- Вы воспользовались лучшими практиками описания конфигурации приложений из урока. 
+1. **Navigate to the Service Directory**:
+   - `auth_service/`
+   - `film_service/`
+   - `etl/`
+
+2. **Copy the `.env.example` File**:
+   In each service directory, copy the `.env.example` file to create a new `.env` file. You can use the following command in your terminal:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Edit the `.env` File**:
+   Open the newly created `.env` file in a text editor and customize the environment variables according to your local development setup or production environment. For example:
+
+   ```env
+   # Example of environment variables in .env file
+   APP_CONFIG__RUN__DEBUG=false
+   APP_CONFIG__RUN__HOST=localhost
+   APP_CONFIG__RUN__PORT=8000
+   ```
+
+4. **Create the `.es_state` File**:
+Navigate to the  Directory:
+   - `etl/`
+and 
+
+   ```bash
+   cp es_state.json.example es_state.json
+   ```
+
+### Example Directory Structure
+
+The structure of the repository should look like this:
+
+```plaintext
+project_root/
+├── auth_service/
+│   ├── .env.example
+│   ├── .env        # <- Generated from .env.example
+│   └── ...
+├── film_service/
+│   ├── .env.example
+│   ├── .env        # <- Generated from .env.example
+│   └── ...
+├── etl/
+│   ├── .env.example
+│   ├── .env        # <- Generated from .env.example
+│   └── ...
+└── README.md
+```
+
+### Important Notes
+
+- Ensure that all required environment variables are defined in the `.env` files to avoid runtime errors.
+- If any variable is missing or incorrectly set, the services may fail to start or behave unexpectedly.
+- Keep your `.env` files secure and never commit them to version control. Instead, share them securely with your team members as needed.
+
+## Running the Services
+
+After setting up the `.env` files, you can start each service using the appropriate command, typically via Docker, `docker-compose up`.
