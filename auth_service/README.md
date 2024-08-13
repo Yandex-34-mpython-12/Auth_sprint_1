@@ -5,6 +5,9 @@
 
 This repository contains the microservices for our application, including authentication (`auth_service`), film management (`film_service`), and an ETL (Extract, Transform, Load) process (`etl`). Each service requires specific environment configurations, which should be set up before running the services.
 
+## Authentication Service
+We use [FastAPI Users](https://fastapi-users.github.io/fastapi-users/latest/) to handle user management, including user creation and deletion. For authentication, we employ the Redis JWT strategy, which stores JWT tokens in a Redis cache to manage user sessions securely and efficiently.
+
 ## Setting Up Environment Variables
 
 Each microservice in this project requires a `.env` file that contains necessary environment variables. These files should be created based on the `.env.example` files provided in each service's directory.
@@ -71,4 +74,10 @@ project_root/
 
 ## Running the Services
 
-After setting up the `.env` files, you can start each service using the appropriate command, typically via Docker, `docker-compose up`.
+After setting up the `.env` and `.es_state` files, you can start each service using the appropriate command, typically via Docker, `docker-compose up`.
+
+## Accessing API Documentation
+After setting up and running the services, you can find the API documentation at:
+
+http://localhost:8001/api/openapi#/
+This link provides access to the OpenAPI documentation for the API, allowing you to explore the available endpoints, request parameters, and responses.
