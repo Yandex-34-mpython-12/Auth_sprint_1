@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.postgres import db_helper
 from src.schemas import RoleCreate, RoleUpdate
 
-from auth_service.src.models import Role
+from src.models import Role
 
 
 class RoleService:
