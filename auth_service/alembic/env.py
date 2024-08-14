@@ -56,8 +56,20 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+def include_name(name, type_, parent_names):
+    if type_ == "schema":
+        return name in ["users",]  # Только для схемы users.
+    else:
+        return True
+
+
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        include_name=include_name,
+        # include_schemas=True
+    )
 
     with context.begin_transaction():
         context.run_migrations()
