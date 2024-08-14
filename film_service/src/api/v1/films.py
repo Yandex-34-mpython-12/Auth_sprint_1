@@ -5,16 +5,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import UUID4
 
 from src.api.v1.deps import PaginationDep, QueryDep, SortDep
+from src.models.auth import UserRole
 from src.models.base import BaseOrjsonModel
 from src.models.film import Film
 from src.services.film import FilmService, get_film_service
-from .auth import role_required
+from .auth import roles_required
 
-router = APIRouter(
-    dependencies=[Depends(
-        role_required("user")
-    )]
-)
+router = APIRouter()
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +23,7 @@ class FilmResponse(BaseOrjsonModel):
 
 
 @router.get('/', summary='Получение списка фильмов', response_model=list[FilmResponse])
+@roles_required(roles_list=[UserRole.admin, UserRole.user])
 async def get_films(
     request: Request,
     pagination_dep: PaginationDep,
@@ -47,6 +45,7 @@ async def get_films(
 
 
 @router.get('/search', summary='Поиск фильмов по названию', response_model=list[FilmResponse])
+@roles_required(roles_list=[UserRole.admin, UserRole.user])
 async def search_films_by_title(
     request: Request,
     pagination_dep: PaginationDep,
@@ -65,6 +64,7 @@ async def search_films_by_title(
 
 
 @router.get('/{film_id}', summary='Информация о фильме по ID', response_model=Film)
+@roles_required(roles_list=[UserRole.admin, UserRole.user])
 async def film_details(film_id: UUID4, film_service: FilmService = Depends(get_film_service)):
     film = await film_service.get_film_by_id(str(film_id))
     if not film:
