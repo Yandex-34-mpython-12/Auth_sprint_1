@@ -1,21 +1,18 @@
-from functools import lru_cache
+from uuid import UUID
 
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.db.base_cache import AsyncCache
-from src.db.postgres import db_helper
-from src.db.redis import AsyncRedisCache, get_redis
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
+from src.models import UserSignIn
+from src.utils.user_agent import DeviceType
 
 
-class UserService:
-    def __init__(self, cache: AsyncCache, db: AsyncSession):
-        self.cache = cache
-        self.db = db
-
-
-@lru_cache()
-def get_user_service(
-    redis: AsyncRedisCache = Depends(get_redis),
-    db: AsyncSession = Depends(db_helper.session_getter),
-) -> UserService:
-    return UserService(redis, db)
+class UserService(SQLAlchemyUserDatabase):
+    async def create_sign_in_history(self, user_id: UUID, user_agent: str, user_device_type: DeviceType) -> UserSignIn:
+        user_sign_in = UserSignIn(
+            user_id=user_id,
+            user_agent=user_agent,
+            user_device_type=user_device_type.value
+        )
+        self.session.add(user_sign_in)
+        await self.session.commit()
+        await self.session.refresh(user_sign_in)
+        return user_sign_in
