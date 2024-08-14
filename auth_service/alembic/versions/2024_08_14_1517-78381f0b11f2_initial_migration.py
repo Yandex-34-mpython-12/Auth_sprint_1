@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 88a9d225f5ca
+Revision ID: 78381f0b11f2
 Revises: 
-Create Date: 2024-08-14 14:43:07.251507
+Create Date: 2024-08-14 15:17:21.487759
 
 """
 
@@ -13,7 +13,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision: str = "88a9d225f5ca"
+revision: str = "78381f0b11f2"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -69,12 +69,15 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("user_agent", sa.String(), nullable=False),
+        sa.Column("user_device_type", sa.String(), nullable=False),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["users.user.id"],
         ),
-        sa.PrimaryKeyConstraint("id"),
+        sa.PrimaryKeyConstraint("id", "user_device_type"),
+        sa.UniqueConstraint("id", "user_device_type"),
         schema="users",
+        postgresql_partition_by="LIST (user_device_type)",
     )
 
 
