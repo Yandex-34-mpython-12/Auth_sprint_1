@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Sequence
 
 from fastapi import Depends
 from sqlalchemy import delete, select, update
@@ -20,7 +21,7 @@ class RoleService:
         await self.db.refresh(role)
         return role
 
-    async def get_roles(self) -> list[Role]:
+    async def get_roles(self) -> Sequence[Role]:
         result = await self.db.scalars(select(Role))
         return result.all()
 
