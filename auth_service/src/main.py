@@ -15,8 +15,6 @@ async def lifespan(app: FastAPI):
     # on_startup
     redis.redis = Redis(host=settings.cache.host, port=settings.cache.port, decode_responses=True)
 
-    await postgres.create_database()  # TODO: DEL after alembic
-
     yield
     # on_shutdown
     await redis.redis.aclose()

@@ -1,22 +1,8 @@
 from typing import AsyncGenerator
 
-from sqlalchemy import event, text
 from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
                                     async_sessionmaker, create_async_engine)
 from src.core.config import settings
-from src.models import Base
-
-
-@event.listens_for(Base.metadata, "before_create")
-def create_schemas(target, connection, **kw):
-    schemas = set()
-    for table in target.tables.values():
-        if table.schema is not None:
-            schemas.add(table.schema)
-    for schema in schemas:
-        connection.execute(
-            text("CREATE SCHEMA IF NOT EXISTS %s" % schema)
-        )
 
 
 class DatabaseHelper:
@@ -54,11 +40,6 @@ class DatabaseHelper:
                 raise
             finally:
                 await session.close()
-
-
-async def create_database() -> None:  # TODO: DEL!
-    async with db_helper.engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
 
 
 db_helper = DatabaseHelper(
