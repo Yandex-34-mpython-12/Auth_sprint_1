@@ -14,4 +14,4 @@ class HistoryBase(BaseModel):
 
 
 class HistoryRead(HistoryBase):
-    id: int
+    id: UUID
