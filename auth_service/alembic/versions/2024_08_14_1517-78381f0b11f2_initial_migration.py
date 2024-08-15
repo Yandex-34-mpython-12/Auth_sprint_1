@@ -29,6 +29,14 @@ def upgrade() -> None:
         sa.UniqueConstraint("name"),
         schema="users",
     )
+    op.execute(
+        """
+        INSERT INTO users.roles (name) VALUES
+        ('admin'),
+        ('user'),
+        ('subscriber')
+        """
+    )
     op.create_table(
         "user",
         sa.Column("role_id", sa.Integer(), nullable=True),
