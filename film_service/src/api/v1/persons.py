@@ -3,17 +3,12 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import UUID4
 
-from src.api.v1.auth import role_required
 from src.api.v1.deps import PaginationDep, QueryDep
 from src.api.v1.films import FilmResponse
 from src.models.base import BaseOrjsonModel
 from src.services.person import PersonService, get_person_service
 
-router = APIRouter(
-    dependencies=[Depends(
-        role_required("user")
-    )]
-)
+router = APIRouter()
 
 
 class PersonFilms(BaseOrjsonModel):

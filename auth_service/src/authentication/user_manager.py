@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional
 from fastapi_users import BaseUserManager, UUIDIDMixin
 from src.core.config import settings
 from src.models.user import User
+from src.utils.user_agent import get_type_from_user_agent
 
 if TYPE_CHECKING:
     from fastapi import Request, Response
@@ -22,9 +23,12 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
             request: Optional["Request"] = None,
             response: Optional["Response"] = None,
     ):
-        log.warning(
-            "User %r logged in.",
-            user.id,
+        user_agent = request.headers.get("User-Agent")
+        device_type = get_type_from_user_agent(user_agent)
+        await self.user_db.create_sign_in_history(
+            user_id=user.id,
+            user_agent=user_agent,
+            user_device_type=device_type
         )
 
     async def on_after_register(
@@ -43,7 +47,6 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         token: str,
         request: Optional["Request"] = None,
     ):
-        # TODO: токен, который можно использовать для верификации, например отправить на email.
         log.warning(
             "Verification requested for user %r. Verification token: %r",
             user.id,

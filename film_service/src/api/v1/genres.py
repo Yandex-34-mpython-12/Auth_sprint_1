@@ -3,15 +3,10 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import UUID4
 
-from src.api.v1.auth import role_required
 from src.models.base import BaseOrjsonModel
 from src.services.genre import GenreService, get_genre_service
 
-router = APIRouter(
-    dependencies=[Depends(
-        role_required("user")
-    )]
-)
+router = APIRouter()
 
 
 class GenreResponse(BaseOrjsonModel):

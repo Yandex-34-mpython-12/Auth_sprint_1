@@ -3,11 +3,11 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from elasticsearch import AsyncElasticsearch
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 
-from src.api.v1 import films, genres, health, persons
+from src.api.v1 import films, genres, health, persons, auth
 from src.core.config import settings
 from src.core.logger import LOGGING
 from src.db import elastic, redis
@@ -32,12 +32,13 @@ app = FastAPI(
     openapi_url='/api/openapi.json',
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
+    dependencies=[Depends(auth.get_current_user_global)]
 )
 
 app.include_router(films.router, prefix='/api/v1/films', tags=['films'])
 app.include_router(genres.router, prefix='/api/v1/genres', tags=['genres'])
 app.include_router(persons.router, prefix='/api/v1/persons', tags=['persons'])
-app.include_router(health.router, prefix='/api/health', tags=['health'])
+app.include_router(health.router, prefix='/api/health', tags=['health'], dependencies=[])
 
 if __name__ == '__main__':
     uvicorn.run(

@@ -10,3 +10,5 @@ pydantic-settings==2.3.4
 gunicorn==22.0.0
 uvicorn==0.30.4
 fastapi-users[sqlalchemy]==13.0.0
+black==24.8.0
+user-agents==2.2.0
