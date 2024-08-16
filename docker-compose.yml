@@ -1,4 +1,11 @@
 services:
+  admin:
+    build: admin_service/app
+    env_file:
+      - admin_service/app/example/.env
+    ports:
+      - 8002:8000
+
   films:
     build: film_service
     env_file: film_service/.env

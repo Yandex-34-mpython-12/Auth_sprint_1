@@ -9,6 +9,8 @@ class JWTRedisStrategy(JWTStrategy):
             "sub": str(user.id),
             "aud": self.token_audience,
             "role": user.role.name if user.role else "anonymous",
+            "email": user.email,
+            "is_active": user.is_active,
         }
         return generate_jwt(
             data, self.encode_key, self.lifetime_seconds, algorithm=self.algorithm
