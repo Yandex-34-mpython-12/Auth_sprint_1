@@ -15,6 +15,7 @@ class RunConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8001
     log_level: int = logging.DEBUG
+    version: str = '0.0.1'
 
 
 class ApiV1Prefix(BaseModel):
@@ -73,6 +74,11 @@ class AccessToken(BaseModel):
     verification_token_secret: str
 
 
+class JaegerConfig(BaseModel):
+    agent_host_name: str = 'localhost'
+    agent_port: int = 6831
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -86,6 +92,7 @@ class Settings(BaseSettings):
     db: DatabaseConfig
     cache: CacheConfig
     access_token: AccessToken
+    jaeger: JaegerConfig = JaegerConfig()
 
 
 settings = Settings()
