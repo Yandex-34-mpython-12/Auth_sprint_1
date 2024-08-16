@@ -21,6 +21,7 @@ class RunConfig(BaseModel):
 class ApiV1Prefix(BaseModel):
     prefix: str = "/v1"
     auth: str = "/auth"
+    oauth: str = "/oauth"
     users: str = "/users"
     roles: str = "/roles"
 
@@ -33,6 +34,13 @@ class ApiPrefix(BaseModel):
     def bearer_token_url(self) -> str:
         # v1/auth/login
         parts = (self.v1.prefix, self.v1.auth, "/login")
+        path = "".join(parts)
+        return path.removeprefix("/")
+
+    @property
+    def oauth2_bearer_token_url(self) -> str:
+        # v1/auth/login
+        parts = (self.v1.prefix, self.v1.oauth, "/login")
         path = "".join(parts)
         return path.removeprefix("/")
 
@@ -79,6 +87,12 @@ class JaegerConfig(BaseModel):
     agent_port: int = 6831
 
 
+class OAuth2Config(BaseModel):
+    yandex_url: str = 'https://oauth.yandex.ru'
+    client_id: str
+    client_secret: str
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -93,6 +107,7 @@ class Settings(BaseSettings):
     cache: CacheConfig
     access_token: AccessToken
     jaeger: JaegerConfig = JaegerConfig()
+    oauth: OAuth2Config
 
 
 settings = Settings()

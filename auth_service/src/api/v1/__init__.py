@@ -6,6 +6,7 @@ from .auth import router as auth_router
 from .health import router as health_router
 from .roles import router as roles_router
 from .users import router as users_router
+from .oauth2 import router as oauth2_router
 
 http_bearer = HTTPBearer(auto_error=False)
 
@@ -17,3 +18,4 @@ router.include_router(health_router)
 router.include_router(auth_router)
 router.include_router(users_router)
 router.include_router(roles_router)
+router.include_router(oauth2_router)
