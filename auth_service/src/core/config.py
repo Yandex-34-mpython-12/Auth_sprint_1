@@ -30,8 +30,8 @@ class ApiPrefix(BaseModel):
 
     @property
     def bearer_token_url(self) -> str:
-        # api/v1/auth/login
-        parts = (self.prefix, self.v1.prefix, self.v1.auth, "/login")
+        # v1/auth/login
+        parts = (self.v1.prefix, self.v1.auth, "/login")
         path = "".join(parts)
         return path.removeprefix("/")
 
