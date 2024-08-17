@@ -10,6 +10,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=True)
 
     # строка с именем поля модели, которая используется в качестве уникального идентификатора
     USERNAME_FIELD = 'email'
