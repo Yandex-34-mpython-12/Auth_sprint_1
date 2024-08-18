@@ -1,11 +1,10 @@
 from functools import lru_cache
 from urllib.parse import parse_qs
 
-from fastapi import Depends, Request, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from src.core.config import settings
 from src.db.postgres import db_helper
 from src.schemas import OAuthUser
