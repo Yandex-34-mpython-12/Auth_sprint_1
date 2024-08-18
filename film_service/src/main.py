@@ -8,6 +8,7 @@ from fastapi.responses import ORJSONResponse
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from redis.asyncio import Redis
 
+from src.api.rate_limit import check_rate_limit
 from src.api.v1 import films, genres, health, persons, auth
 from src.core.config import settings
 from src.core.logger import LOGGING
@@ -34,7 +35,7 @@ app = FastAPI(
     openapi_url='/api/openapi.json',
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
-    dependencies=[Depends(auth.get_current_user_global)]
+    dependencies=[Depends(auth.get_current_user_global), Depends(check_rate_limit)]
 )
 
 

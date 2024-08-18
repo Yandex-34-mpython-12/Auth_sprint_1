@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     jaeger_agent_host_name: str = Field('localhost', alias='JAEGER_AGENT_HOSTNAME')
     jaeger_agent_port: int = Field(6831, alias='JAEGER_AGENT_PORT')
 
+    request_limit_per_minute: int = Field(60, alias='REQUEST_LIMIT_PER_MINUTE')
+
 
 settings = Settings()
 
