@@ -1,9 +1,8 @@
 import datetime
 
 from fastapi import Depends, HTTPException, status
-
 from src.core.config import settings
-from src.db.redis import get_redis, AsyncRedisCache
+from src.db.redis import AsyncRedisCache, get_redis
 from src.models.auth import AuthRequest
 
 
