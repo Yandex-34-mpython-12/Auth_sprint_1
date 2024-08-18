@@ -1,43 +1,46 @@
 services:
   admin:
-    build: admin_service/app
     env_file:
       - admin_service/app/example/.env
+    build: admin_service/app
+    depends_on:
+      - postgres
+      - elasticsearch
     ports:
       - 8002:8000
-
-  films:
-    build: film_service
-    env_file: film_service/.env
-    container_name: films
-#    expose:
-#      - ${FILMS_PORT}
-    ports:
-      - 8000:8000
-    depends_on:
-      - etl
-      - elasticsearch
-      - redis
-      - tracer
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8000/api/health/ || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  #   films:
+  #     build: film_service
+  #     env_file: film_service/.env
+  #     container_name: films
+  # #    expose:
+  # #      - ${FILMS_PORT}
+  #     ports:
+  #       - 8000:8000
+  #     depends_on:
+  #       - etl
+  #       - elasticsearch
+  #       - redis
+  #       - tracer
+  #     healthcheck:
+  #       test: [ "CMD-SHELL", "curl -f http://localhost:8000/api/health/ || exit 1" ]
+  #       interval: 10s
+  #       timeout: 5s
+  #       retries: 5
 
   auth:
     build: auth_service
     env_file: auth_service/.env
     container_name: auth
-#    expose:
-#      - ${AUTH_PORT}
+    #    expose:
+    #      - ${AUTH_PORT}
     ports:
       - 8001:8001
     depends_on:
       - redis
       - tracer
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8001/api/v1/health/ || exit 1" ]
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:8001/api/v1/health/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -48,8 +51,8 @@ services:
     env_file: .env
     volumes:
       - redis-data:/data
-#    expose:
-#      - ${REDIS_PORT}
+    #    expose:
+    #      - ${REDIS_PORT}
     ports:
       - 6379:6379
     healthcheck:
@@ -64,13 +67,13 @@ services:
     image: postgres:16
     container_name: postgres
     env_file: .env
-#    expose:
-#      - ${POSTGRES_PORT}
+    #    expose:
+    #      - ${POSTGRES_PORT}
     ports:
       - 5432:5432
-    volumes:
-      - ./db/db_dump_260624.sql:/docker-entrypoint-initdb.d/db_dump_260624.sql
-      - postgres-data:/var/lib/postgresql/data
+    # volumes:
+    #   - ./db/db_dump_260624.sql:/docker-entrypoint-initdb.d/db_dump_260624.sql
+    #   - postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
       interval: 10s
@@ -84,8 +87,8 @@ services:
     environment:
       - xpack.security.enabled=false
       - discovery.type=single-node
-#    expose:
-#      - ${ELASTICSEARCH_PORT}
+    #    expose:
+    #      - ${ELASTICSEARCH_PORT}
     ports:
       - 9200:9200
     volumes:
@@ -120,7 +123,7 @@ services:
       - "5775:5775/udp"
     environment:
       COLLECTOR_ZIPKIN_HTTP_PORT: 9411
-    command: [ "--collector.zipkin.host-port=0.0.0.0:9411" ]
+    command: ["--collector.zipkin.host-port=0.0.0.0:9411"]
     restart: on-failure
 
 #  nginx: TODO:!
